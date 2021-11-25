@@ -1,16 +1,83 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SideMenu from "../SideMenu";
 import Select from "react-select";
+import { db } from "../../../config/firebase";
+import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const schema = yup
+  .object({
+    slotName: yup.string().required(),
+    // selectedAreas: yup.string().required(),
+  })
+  .required();
 
 const AddSlot = () => {
-  const options = [
-    { value: "korangi", label: "Korangi" },
-    { value: "lyari", label: "Lyari" },
-    { value: "saddar", label: "Saddar" },
-  ];
+  // const [slotName, setSlotName] = useState("");
+  // const [areas, setAreas] = useState("");
+  const [selectedAreas, setSelectedAreas] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [error, setError] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  useEffect(() => {
+    let temp = [];
+    db.collection("areas")
+      .get()
+      .then((res) => {
+        res.docs.map((a) => {
+          let obj = {
+            label: a.data().area,
+            value: a.data().area,
+          };
+          temp.push(obj);
+        });
+
+        setOptions(temp);
+      });
+  }, []);
+
   const handleAreas = (e) => {
-    console.log(e);
-  }
+    setSelectedAreas(e);
+    if (!e.length > 0) {
+      setError(true);
+    } else {
+      setError(false);
+    }
+  };
+
+  const createSlot = (data, e) => {
+    console.log(data);
+    // e.pre  ventDefault();
+    // let count = 0;
+    // for (let i = 0; i < selectedAreas.length; i++) {
+    //   let input = { slotName, area: selectedAreas[i].value };
+    //   db.collection("slots")
+    //     .add(input)
+    //     .then(function (docRef) {
+    //       count += 1;
+    //       console.log(docRef);
+
+    //       // setOptions(selectedAreas);
+
+    //       if (selectedAreas.length === count) {
+    //         setSelectedAreas([]);
+    //         toast.success("Slot Created Sucessfully...");
+    //       }
+    //     })
+    //     .catch((err) => console.log(err));
+    // }
+  };
+
+  console.log(selectedAreas);
   return (
     <>
       <SideMenu />
@@ -19,16 +86,40 @@ const AddSlot = () => {
           <h2 className="mb-4" style={{ fontWeight: "500" }}>
             Create Slot
           </h2>
-          <form action="" style={{ width: "80%", paddingBottom:'2rem' }}>
+          <form
+            onSubmit={handleSubmit(createSlot)}
+            style={{ width: "80%", paddingBottom: "2rem" }}
+          >
             <label>Slot Name:</label>
             <input
               type="text"
-              className="form-control mb-4"
+              {...register("slotName")}
+              className="form-control "
               placeholder="Type Slot Name Here..."
             />
+            <span className="text text-danger">{errors.slotName?.message}</span><br/>
             <label>Select Areas:</label>
-            <Select options={options} isMulti onChange={(e) => handleAreas(e)}/>
-            <button className="btn btn-dark" style={{marginTop:'2rem'}}>Create Slot</button>
+            <Select
+              options={options}
+              isMulti
+              onChange={(e) => handleAreas(e)}
+              className="mt-3"
+            />
+            {error && (
+              <>
+                <span className="text text-danger p-1">
+                  Please select atleast one area
+                </span>
+                <br />
+              </>
+            )}
+            <button
+              className="btn btn-dark"
+              style={{ marginTop: "2rem" }}
+              disabled={error ? true : false}
+            >
+              Create Slot
+            </button>
           </form>
         </div>
       </div>

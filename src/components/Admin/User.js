@@ -4,13 +4,19 @@ import { db } from "../../config/firebase";
 import { ToastContainer, toast } from "react-toastify";
 import SideMenu from "./SideMenu";
 import { FiEdit, FiTrash } from "react-icons/fi";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import Select from "react-select";
 
-const User = () => {
+const User = (props) => {
   const [userContent, setUserContent] = useState([]);
   const [loader, setLoader] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [edtId, setEdtId] = useState("");
+  const [edtRole, setEdtRole] = useState("");
 
-  useEffect(() => {
-    setLoader(true);
+  const fetch = () => {
     db.collection("users")
       .get()
       .then((user) => {
@@ -25,9 +31,40 @@ const User = () => {
         setLoader(false);
         console.log(err);
       });
+  };
+  useEffect(() => {
+    setLoader(true);
+    fetch();
   }, []);
 
-  console.log(userContent, "----userContent");
+  const toggle = (id, name, email, role) => {
+    setModal(!modal);
+    setEditName(name);
+    setEditEmail(email);
+    setEdtId(id);
+    setEdtRole(role);
+  };
+  const updateUser = (id) => {
+    db.collection("users")
+      .doc(id)
+      .update({
+        name: editName,
+        role: edtRole,
+      })
+      .then((res) => {
+        setModal(!modal)
+        console.log(res);
+        fetch();
+        toast.success("User has been updated..");
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const options = [
+    { value: "admin", label: "Admin" },
+    { value: "user", label: "User" },
+  ];
+  console.log(edtRole);
   return (
     <>
       <SideMenu />
@@ -53,15 +90,16 @@ const User = () => {
                   <th>Action</th>
                 </tr>
               </thead>
-              {loader ? (
-                <tbody>
-                  <tr>
-                    <div class="spinner-border text-primary"></div>
+
+              <tbody>
+                {loader ? (
+                  <tr className="text-center">
+                    <td colspan="4">
+                      <div class="spinner-border text-primary"></div>
+                    </td>
                   </tr>
-                </tbody>
-              ) : (
-                <tbody>
-                  {userContent?.map((item) => {
+                ) : (
+                  userContent?.map((item) => {
                     return (
                       <tr>
                         <td>{item?.data?.name}</td>
@@ -70,7 +108,14 @@ const User = () => {
                         <td>
                           <button
                             className="td_edit"
-                            onClick={() => alert(item?.id)}
+                            onClick={() =>
+                              toggle(
+                                item?.id,
+                                item?.data?.name,
+                                item?.data?.email,
+                                item?.data?.role
+                              )
+                            }
                           >
                             <FiEdit />
                           </button>
@@ -83,13 +128,51 @@ const User = () => {
                         </td>
                       </tr>
                     );
-                  })}
-                </tbody>
-              )}
+                  })
+                )}
+              </tbody>
             </table>
           </div>
         </div>
       </div>
+
+      {/* modal */}
+      <Modal
+        size="md"
+        isOpen={modal}
+        toggle={toggle}
+        className={props.className}
+      >
+        <ModalHeader toggle={toggle}>Edit User</ModalHeader>
+        <ModalBody>
+          <label>Full Name</label>
+          <input
+            type="text"
+            className="form-control mb-3"
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+          />
+          <label>Email</label>
+          <input
+            type="email"
+            className="form-control mb-3"
+            value={editEmail}
+            onChange={(e) => setEditEmail(e.target.value)}
+            disabled
+          />
+          <label>Role</label>
+          <Select
+            onChange={(e) => setEdtRole(e.value)}
+            options={options}
+            defaultValue={edtRole === "admin" ? options[0] : options[1]}
+          />
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={() => updateUser(edtId)}>
+            Update
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 };

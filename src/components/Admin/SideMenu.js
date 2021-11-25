@@ -24,7 +24,7 @@ const SideMenu = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const data = useSelector((state) => state);
-  console.log(data);
+ 
   const toggle = () => {
     setDropdownOpen(!dropdownOpen);
   };

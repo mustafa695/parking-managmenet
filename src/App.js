@@ -22,42 +22,7 @@ function App() {
   const [loader, setLoader] = useState(false);
   const state = useSelector((state) => state);
 
-  console.log(state, "-----------");
-  // useEffect(() => {
-  //   setLoader(true);
-  //   auth.onAuthStateChanged((user) => {
-  //     setUid(user?.uid);
-  //   });
-
-  //   if (uid?.length) {
-  //     db.collection("users")
-  //       .doc(uid)
-  //       .get()
-  //       .then((res) => {
-  //         setRole(res.data()?.role);
-  //         setLoader(false);
-  //       })
-  //       .catch((err) => {
-  //         setLoader(false);
-  //         console.log(err);
-  //       });
-  //   } else {
-  //     setLoader(false);
-  //   }
-  // }, [uid]);
-
-  // if (loader) {
-  //   return (
-  //     <div
-  //       class="d-flex justify-content-center align-items-center"
-  //       style={{ height: "80vh" }}
-  //     >
-  //       <div class="spinner-border" role="status">
-  //         <span class="sr-only"></span>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  // console.log(state, "-----------");
 
   return (
     <>
