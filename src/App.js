@@ -15,6 +15,7 @@ import Login from "./components/Login";
 import NotFound from "./components/NotFound";
 import Signup from "./components/Signup";
 import Home from "./components/User/Home";
+import SlotDetail from "./components/User/SlotDetail";
 
 function App() {
   const [uid, setUid] = useState("");
@@ -42,7 +43,10 @@ function App() {
             </>
           )}
           {state.userData?.role === "user" && (
-            <Route exact path="/home" element={<Home />} />
+            <>
+              <Route exact path="/home" element={<Home />} />
+              <Route exact path="/slots-detail/:id" element={<SlotDetail />} />
+            </>
           )}
 
           <Route path="*" element={<NotFound />} />

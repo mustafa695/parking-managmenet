@@ -35,6 +35,7 @@ const AddSlot = () => {
       .then((res) => {
         res.docs.map((a) => {
           let obj = {
+            id: a.id,
             label: a.data().area,
             value: a.data().area,
           };
@@ -53,28 +54,34 @@ const AddSlot = () => {
       setError(false);
     }
   };
-
+  console.log(selectedAreas);
   const createSlot = (data, e) => {
-    console.log(data);
+    // console.log(data.slotName);
     // e.pre  ventDefault();
-    // let count = 0;
-    // for (let i = 0; i < selectedAreas.length; i++) {
-    //   let input = { slotName, area: selectedAreas[i].value };
-    //   db.collection("slots")
-    //     .add(input)
-    //     .then(function (docRef) {
-    //       count += 1;
-    //       console.log(docRef);
+    let count = 0;
+    for (let i = 0; i < selectedAreas.length; i++) {
+      let docID = selectedAreas[i].id;
+      let input = {
+        slotName: data.slotName,
+        area: selectedAreas[i].value,
+        areaId: selectedAreas[i].id,
+        available: true
+      };
+      db.collection("slots")
+        .add(input)
+        .then((res) => {
+          count += 1;
+          console.log(res);
 
-    //       // setOptions(selectedAreas);
+          // setOptions(selectedAreas);
 
-    //       if (selectedAreas.length === count) {
-    //         setSelectedAreas([]);
-    //         toast.success("Slot Created Sucessfully...");
-    //       }
-    //     })
-    //     .catch((err) => console.log(err));
-    // }
+          if (selectedAreas.length === count) {
+            setSelectedAreas([]);
+            toast.success("Slot Created Sucessfully...");
+          }
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   console.log(selectedAreas);
@@ -97,7 +104,8 @@ const AddSlot = () => {
               className="form-control "
               placeholder="Type Slot Name Here..."
             />
-            <span className="text text-danger">{errors.slotName?.message}</span><br/>
+            <span className="text text-danger">{errors.slotName?.message}</span>
+            <br />
             <label>Select Areas:</label>
             <Select
               options={options}

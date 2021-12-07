@@ -163,7 +163,7 @@ const SideMenu = () => {
             </li>
           </>
         ) : (
-          <li><Link to="/home">Home</Link></li>
+          <li onClick={() => navigate('/home')}><Link to="/home">Home</Link></li>
         )}
 
         <li onClick={logOut}>
