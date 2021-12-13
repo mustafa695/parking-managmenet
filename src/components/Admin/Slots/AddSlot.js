@@ -54,7 +54,7 @@ const AddSlot = () => {
       setError(false);
     }
   };
-  console.log(selectedAreas);
+  
   const createSlot = (data, e) => {
     // console.log(data.slotName);
     // e.pre  ventDefault();
@@ -65,7 +65,7 @@ const AddSlot = () => {
         slotName: data.slotName,
         area: selectedAreas[i].value,
         areaId: selectedAreas[i].id,
-        available: true
+        available: true,
       };
       db.collection("slots")
         .add(input)
@@ -84,7 +84,6 @@ const AddSlot = () => {
     }
   };
 
-  console.log(selectedAreas);
   return (
     <>
       <SideMenu />

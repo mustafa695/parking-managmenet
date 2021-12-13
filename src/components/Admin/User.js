@@ -52,7 +52,7 @@ const User = (props) => {
         role: edtRole,
       })
       .then((res) => {
-        setModal(!modal)
+        setModal(!modal);
         console.log(res);
         fetch();
         toast.success("User has been updated..");
@@ -64,7 +64,16 @@ const User = (props) => {
     { value: "admin", label: "Admin" },
     { value: "user", label: "User" },
   ];
-  console.log(edtRole);
+  const deleteUser = (id) => {
+    db.collection("users")
+      .doc(id)
+      .delete()
+      .then((res) => {
+        fetch();
+        console.log("deleted")
+      })
+      .catch((err) => console.log(err));
+  };
   return (
     <>
       <SideMenu />
@@ -121,7 +130,7 @@ const User = (props) => {
                           </button>
                           <button
                             className="td_remove"
-                            onClick={() => alert(item?.id)}
+                            onClick={() => deleteUser(item?.id)}
                           >
                             <FiTrash />
                           </button>

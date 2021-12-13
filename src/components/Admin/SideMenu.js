@@ -24,7 +24,7 @@ const SideMenu = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const data = useSelector((state) => state);
- 
+
   const toggle = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -152,18 +152,11 @@ const SideMenu = () => {
               />
               <Link to="/feedback">Feedbacks</Link>
             </li>
-
-            <li>
-              <MdOutlineCancelPresentation
-                color="#fff"
-                size={20}
-                style={{ marginRight: "15px" }}
-              />
-              <Link to="">Cancellations</Link>
-            </li>
           </>
         ) : (
-          <li onClick={() => navigate('/home')}><Link to="/home">Home</Link></li>
+          <li onClick={() => navigate("/home")}>
+            <Link to="/home">Home</Link>
+          </li>
         )}
 
         <li onClick={logOut}>

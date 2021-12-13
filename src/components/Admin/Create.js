@@ -10,7 +10,7 @@ const schema = yup
   .object({
     area: yup.string().required(),
     startTime: yup.string().required(),
-    endTime: yup.string().required()
+    endTime: yup.string().required(),
   })
   .required();
 
@@ -25,10 +25,12 @@ const Create = () => {
   });
 
   const createArea = (data, e) => {
-    console.log(data);
-    
     setLoader(true);
-    let input = { area: data.area, startTime: data.startTime, endTime: data.endTime}
+    let input = {
+      area: data.area,
+      startTime: data.startTime,
+      endTime: data.endTime,
+    };
     db.collection("areas")
       .add(input)
       .then((snapshot) => {
@@ -59,7 +61,7 @@ const Create = () => {
               // value={area}
               // onChange={(e) => setArea(e.target.value)}
             />
-             <span className="text text-danger">{errors.area?.message}</span>
+            <span className="text text-danger">{errors.area?.message}</span>
             <div className="row">
               <div className="col-md-6 mt-3">
                 <label>Start Time</label>
@@ -70,7 +72,9 @@ const Create = () => {
                   // value={startTime}
                   // onChange={(e) => setStartTime(e.target.value)}
                 />
-                 <span className="text text-danger">{errors.startTime?.message}</span>
+                <span className="text text-danger">
+                  {errors.startTime?.message}
+                </span>
               </div>
               <div className="col-md-6 mt-3">
                 <label>End Time</label>
@@ -81,7 +85,9 @@ const Create = () => {
                   // value={endTime}
                   // onChange={(e) => setEndTime(e.target.value)}
                 />
-                 <span className="text text-danger">{errors.endTime?.message}</span>
+                <span className="text text-danger">
+                  {errors.endTime?.message}
+                </span>
               </div>
             </div>
             {loader ? (

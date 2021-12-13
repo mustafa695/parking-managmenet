@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import main from "../assets/main_park.png";
 import firebase from "@firebase/app-compat";
-import { db } from "../config/firebase";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
+import main from "../assets/main_park.png";
+import { db } from "../config/firebase";
 
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loader, setLoader] = useState(false);
+  const navigate = useNavigate();
+  const state = useSelector((state) => state);
 
+  useEffect(() => {
+    if (state?.userData?.role == "user") {
+      navigate("/home");
+    } else if (state?.userData?.role == "admin") {
+      navigate("/dashboard");
+    } else {
+      navigate("/signup");
+    }
+  }, [state]);
   const signup = (e) => {
     e.preventDefault();
     setLoader(true);
@@ -35,6 +48,7 @@ const Signup = () => {
             setName("");
             setPassword("");
             setEmail("");
+            navigate("/");
           })
           .catch((err) => {
             setLoader(false);
@@ -46,6 +60,7 @@ const Signup = () => {
         toast.error(error.message);
       });
   };
+
   return (
     <div className="container" id="login">
       <ToastContainer />
@@ -65,7 +80,7 @@ const Signup = () => {
                 type="text"
                 className="email"
                 placeholder="Type Your Name..."
-                // required
+                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -101,7 +116,10 @@ const Signup = () => {
             <div className="d-flex justify-content-center">
               {loader ? (
                 <button class="login_btn" disabled>
-                  <span class="spinner-border spinner-border-sm" style={{marginRight:'0.33rem'}}></span>
+                  <span
+                    class="spinner-border spinner-border-sm"
+                    style={{ marginRight: "0.33rem" }}
+                  ></span>
                   Singup...
                 </button>
               ) : (

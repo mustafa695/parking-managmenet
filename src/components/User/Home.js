@@ -17,7 +17,7 @@ const Home = () => {
         setAreaData(temp);
       });
   }, []);
-  console.log(areaData);
+
   return (
     <>
       <SideMenu />

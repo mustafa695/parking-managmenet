@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import firebase from "@firebase/app-compat";
 import main from "../assets/main_park.png";
 import { ToastContainer, toast } from "react-toastify";
 import { db } from "../config/firebase";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUserData } from "../store/action";
 
 const Login = () => {
@@ -14,6 +14,17 @@ const Login = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const state = useSelector((state) => state);
+
+  useEffect(() => {
+    if (state?.userData?.role == "user") {
+      navigate("/home");
+    } else if (state?.userData?.role == "admin") {
+      navigate("/dashboard");
+    } else {
+      navigate("/");
+    }
+  }, [state]);
   // console.log(users);
   const login = (e) => {
     e.preventDefault();
@@ -22,12 +33,8 @@ const Login = () => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
-        console.log(userCredential.user.email);
-
         setLoader(false);
-        toast.success("Login Successfully");
         let user = userCredential.user;
-        console.log(user.uid);
 
         db.collection("users")
           .doc(user.uid)
@@ -36,8 +43,10 @@ const Login = () => {
             dispatch(loginUserData({ ...doc.data(), id: doc.id }));
             // setTimeout(() => {
             if (doc.data()?.role === "admin") {
+              toast.success("Welcome To Dashboard..");
               navigate("/dashboard");
             } else {
+              toast.success("Login Successfully..");
               navigate("/home");
             }
             // }, 500);

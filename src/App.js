@@ -18,12 +18,10 @@ import Home from "./components/User/Home";
 import SlotDetail from "./components/User/SlotDetail";
 
 function App() {
-  const [uid, setUid] = useState("");
-  const [role, setRole] = useState("");
-  const [loader, setLoader] = useState(false);
+  
   const state = useSelector((state) => state);
 
-  // console.log(state, "-----------");
+
 
   return (
     <>

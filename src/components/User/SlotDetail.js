@@ -13,6 +13,7 @@ const schema = yup
   .object({
     startTime: yup.string().required(),
     endTime: yup.string().required(),
+    date: yup.string().required(),
   })
   .required();
 const SlotDetail = () => {
@@ -21,6 +22,7 @@ const SlotDetail = () => {
   const [areaDetail, setAreaDetail] = useState([]);
   const [showSlots, setShowSlots] = useState(false);
   const [userStartTime, setUserStartTime] = useState("");
+  const [userDate, setUserDate] = useState("");
   const [userEndTime, setUserEndTime] = useState("");
   const [cantBook, setCantBook] = useState(false);
 
@@ -36,8 +38,7 @@ const SlotDetail = () => {
   const user = useSelector((state) => state);
   let getDated = new Date();
   let currentDated = getDated.toISOString().slice(0, 10);
-  console.log(slots);
-  console.log(bookData);
+  
   useEffect(() => {
     let temp = [];
     db.collection("slots")
@@ -60,32 +61,33 @@ const SlotDetail = () => {
     let temp2 = [];
     db.collection("booking")
       .where("areaId", "==", id)
-      .where("bookingDate", "==", currentDated)
+      .where("bookingDate", ">=", currentDated)
       .get()
       .then((res) => {
         res.docs.map((i) => {
           temp2.push(i.data());
         });
         setBookData(temp2);
-      });
-  }, [id]);
-
+      })
+      .catch((err) => console.log(err));
+  }, [id, currentDated]);
+  // console.log(slots);
   const checkAvailablity = (data, e) => {
     setShowSlots(true);
     setUserStartTime(data.startTime);
     setUserEndTime(data.endTime);
+    setUserDate(data.date);
     let getdate = new Date();
     let currentDate = getdate.toISOString().slice(0, 10);
-    console.log(currentDate,'--urrentdate');
+
     for (let i = 0; i < bookData?.length; i++) {
       let filteredSlots = slots?.filter((s) => bookData[i].slotId === s.id);
       if (filteredSlots.length) {
-        console.log(bookData[i].bookingDate, "book date");
         for (let f = 0; f < filteredSlots.length; f++) {
           if (
             data.startTime <= bookData[i].endTime &&
             data.endTime >= bookData[i].startTime &&
-            bookData[i].bookingDate === currentDate
+            bookData[i].parkingDate === data.date
           ) {
             let ind = slots.findIndex((ind) => bookData[i]?.slotId === ind.id);
             // console.log(slots[ind], "--index number");
@@ -122,19 +124,39 @@ const SlotDetail = () => {
         bookerId: user?.userData?.id,
         status: true,
         bookingDate: currentDate,
+        parkingDate: userDate,
       };
 
       db.collection("booking")
         .add(input)
         .then((res) => {
-          savePdf(currentDate, input.bookerName, areaName, slotName, input.startTime, input.endTime);
-          toast.success("Your Slots Booked Successfully...!");
+          savePdf(
+            currentDate,
+            input.bookerName,
+            areaName,
+            slotName,
+            input.startTime,
+            input.endTime
+          );
           setCantBook(true);
+          let ind = slots?.findIndex((ind) => sid === ind.id);
+          // console.log(slots[ind], "--index number");
+          let dup = [...slots];
+          dup[ind].available = false;
+          setSlots(dup);
+          toast.success("Your Slots Booked Successfully...!");
         })
         .catch((err) => console.log(err));
     }
   };
-  const savePdf = (currentDate, bookerName, areaName, slotName, startTime, endTime) => {
+  const savePdf = (
+    currentDate,
+    bookerName,
+    areaName,
+    slotName,
+    startTime,
+    endTime
+  ) => {
     let doc = new jsPDF("p", "pt");
 
     doc.text(
@@ -152,8 +174,8 @@ const SlotDetail = () => {
           <h2 className="my-4">Slots</h2>
           <p>Check Slots Availablity</p>
           <form onSubmit={handleSubmit(checkAvailablity)}>
-            <div className="row align-items-center">
-              <div className="col-sm-4">
+            <div className="row align-items-start">
+              <div className="col-md-3">
                 <label>Start Time</label>
                 <input
                   type="time"
@@ -164,7 +186,7 @@ const SlotDetail = () => {
                   {errors.startTime?.message}
                 </span>
               </div>
-              <div className="col-sm-4">
+              <div className="col-md-3">
                 <label>End Time</label>
                 <input
                   type="time"
@@ -175,7 +197,17 @@ const SlotDetail = () => {
                   {errors.endTime?.message}
                 </span>
               </div>
-              <div className="col-sm-4 mt-4">
+              <div className="col-md-3">
+                <label>Date</label>
+                <input
+                  min={currentDated}
+                  type="date"
+                  {...register("date")}
+                  className="form-control"
+                />
+                <span className="text text-danger">{errors.date?.message}</span>
+              </div>
+              <div className="col-md-3 mt-4">
                 <button className="btn btn-primary" type="submit">
                   Check Availablity
                 </button>
@@ -184,7 +216,7 @@ const SlotDetail = () => {
           </form>
 
           <div className="row" style={{ display: showSlots ? "flex" : "none" }}>
-            {slots?.length &&
+            {slots?.length ?
               slots?.map((data) => {
                 return (
                   <div className="col-md-2">
@@ -211,7 +243,7 @@ const SlotDetail = () => {
                     </div>
                   </div>
                 );
-              })}
+              }): '' }
           </div>
         </div>
       </div>
