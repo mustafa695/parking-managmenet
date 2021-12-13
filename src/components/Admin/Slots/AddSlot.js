@@ -15,17 +15,18 @@ const schema = yup
   .required();
 
 const AddSlot = () => {
-  // const [slotName, setSlotName] = useState("");
-  // const [areas, setAreas] = useState("");
+ 
   const [selectedAreas, setSelectedAreas] = useState([]);
   const [options, setOptions] = useState([]);
   const [error, setError] = useState(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+  
   });
 
   useEffect(() => {
@@ -54,10 +55,9 @@ const AddSlot = () => {
       setError(false);
     }
   };
-  
+
   const createSlot = (data, e) => {
-    // console.log(data.slotName);
-    // e.pre  ventDefault();
+    
     let count = 0;
     for (let i = 0; i < selectedAreas.length; i++) {
       let docID = selectedAreas[i].id;
@@ -70,13 +70,13 @@ const AddSlot = () => {
       db.collection("slots")
         .add(input)
         .then((res) => {
+          e.target.reset();
           count += 1;
-          console.log(res);
-
+          
           // setOptions(selectedAreas);
-
           if (selectedAreas.length === count) {
-            setSelectedAreas([]);
+            e.target.reset();
+            setSelectedAreas("");
             toast.success("Slot Created Sucessfully...");
           }
         })
@@ -111,6 +111,7 @@ const AddSlot = () => {
               isMulti
               onChange={(e) => handleAreas(e)}
               className="mt-3"
+              value={selectedAreas || ''}
             />
             {error && (
               <>
@@ -124,6 +125,7 @@ const AddSlot = () => {
               className="btn btn-dark"
               style={{ marginTop: "2rem" }}
               disabled={error ? true : false}
+              type="submit"
             >
               Create Slot
             </button>

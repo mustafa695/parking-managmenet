@@ -25,7 +25,7 @@ const SlotDetail = () => {
   const [userDate, setUserDate] = useState("");
   const [userEndTime, setUserEndTime] = useState("");
   const [cantBook, setCantBook] = useState(false);
-
+  const [cost, setCost] = useState(""); 
   const {
     register,
     handleSubmit,
@@ -38,7 +38,7 @@ const SlotDetail = () => {
   const user = useSelector((state) => state);
   let getDated = new Date();
   let currentDated = getDated.toISOString().slice(0, 10);
-  
+
   useEffect(() => {
     let temp = [];
     db.collection("slots")
@@ -74,12 +74,21 @@ const SlotDetail = () => {
   // console.log(slots);
   const checkAvailablity = (data, e) => {
     setShowSlots(true);
+    let ts = data.startTime.split(":");
+    let te = data.endTime.split(":");
+    let timeDur = te[0] - ts[0];
+    let finalCost = areaDetail?.price * timeDur;
+    setCost(finalCost);
     setUserStartTime(data.startTime);
     setUserEndTime(data.endTime);
     setUserDate(data.date);
     let getdate = new Date();
     let currentDate = getdate.toISOString().slice(0, 10);
-
+    // if (data.endTime < data.startTime) {
+    //   toast.error("End time cannot before start time");
+    // } else {
+    //   setShowSlots(true);
+    // }
     for (let i = 0; i < bookData?.length; i++) {
       let filteredSlots = slots?.filter((s) => bookData[i].slotId === s.id);
       if (filteredSlots.length) {
@@ -108,7 +117,7 @@ const SlotDetail = () => {
   //   const getBookSlots = () => {
 
   //   };
-
+  
   const bookSlot = (sid, areaName, slotName) => {
     if (!userStartTime.length && !userEndTime.length) {
       toast.error("Please confirm check availabity first.");
@@ -125,6 +134,7 @@ const SlotDetail = () => {
         status: true,
         bookingDate: currentDate,
         parkingDate: userDate,
+        cost: cost
       };
 
       db.collection("booking")
@@ -133,10 +143,11 @@ const SlotDetail = () => {
           savePdf(
             currentDate,
             input.bookerName,
-            areaName,
+            areaDetail?.area,
             slotName,
             input.startTime,
-            input.endTime
+            input.endTime,
+            cost
           );
           setCantBook(true);
           let ind = slots?.findIndex((ind) => sid === ind.id);
@@ -155,14 +166,15 @@ const SlotDetail = () => {
     areaName,
     slotName,
     startTime,
-    endTime
+    endTime,
+    cost
   ) => {
     let doc = new jsPDF("p", "pt");
 
     doc.text(
       40,
       40,
-      ` ******Parking Slip****** \n Date of Slip: ${currentDate} \n Booker Name: ${bookerName} \n Parking Area Name: ${areaName} \n Parking Slot Name: ${slotName} \n Parking Time: From ${startTime} To ${endTime} \n *********************************`
+      ` ******Parking Slip****** \n Date of Slip: ${currentDate} \n Booker Name: ${bookerName} \n Parking Area Name: ${areaName} \n  \n Parking Time: From ${startTime} To ${endTime} \n \n Total Cost: ${cost} \n *********************************`
     );
     doc.save("test1.pdf");
   };
@@ -216,34 +228,35 @@ const SlotDetail = () => {
           </form>
 
           <div className="row" style={{ display: showSlots ? "flex" : "none" }}>
-            {slots?.length ?
-              slots?.map((data) => {
-                return (
-                  <div className="col-md-2">
-                    <div
-                      className="card"
-                      onClick={() =>
-                        data?.available === false
-                          ? alert("Sorry Already Booked")
-                          : cantBook
-                          ? toast.error("You can book one slot at a time")
-                          : bookSlot(data?.id, data?.area, data?.slotName)
-                      }
-                      style={{
-                        cursor:
-                          data?.available === false || cantBook
-                            ? "not-allowed"
-                            : "pointer",
-                        backgroundColor:
-                          data?.available == false ? "red" : "#fff",
-                        color: data?.available === false ? "#fff" : "#000",
-                      }}
-                    >
-                      <h4 className="text-center">{data?.data?.slotName}</h4>
+            {slots?.length
+              ? slots?.map((data) => {
+                  return (
+                    <div className="col-md-2">
+                      <div
+                        className="card"
+                        onClick={() =>
+                          data?.available === false
+                            ? alert("Sorry Already Booked")
+                            : cantBook
+                            ? toast.error("You can book one slot at a time")
+                            : bookSlot(data?.id, data?.area, data?.slotName)
+                        }
+                        style={{
+                          cursor:
+                            data?.available === false || cantBook
+                              ? "not-allowed"
+                              : "pointer",
+                          backgroundColor:
+                            data?.available == false ? "red" : "#fff",
+                          color: data?.available === false ? "#fff" : "#000",
+                        }}
+                      >
+                        <h4 className="text-center">{data?.data?.slotName}</h4>
+                      </div>
                     </div>
-                  </div>
-                );
-              }): '' }
+                  );
+                })
+              : ""}
           </div>
         </div>
       </div>

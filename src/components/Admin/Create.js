@@ -9,6 +9,7 @@ import * as yup from "yup";
 const schema = yup
   .object({
     area: yup.string().required(),
+    price: yup.string().required(),
     startTime: yup.string().required(),
     endTime: yup.string().required(),
   })
@@ -25,11 +26,13 @@ const Create = () => {
   });
 
   const createArea = (data, e) => {
+    console.log(data.price);
     setLoader(true);
     let input = {
       area: data.area,
       startTime: data.startTime,
       endTime: data.endTime,
+      price: data.price
     };
     db.collection("areas")
       .add(input)
@@ -58,10 +61,16 @@ const Create = () => {
               {...register("area")}
               className="form-control mt-3"
               placeholder="Type Area Name Here..."
-              // value={area}
-              // onChange={(e) => setArea(e.target.value)}
             />
-            <span className="text text-danger">{errors.area?.message}</span>
+            <span className="text text-danger">{errors.area?.message}</span><br/>
+            <label >Price Per Hour:</label>
+            <input
+              type="number"
+              {...register("price")}
+              className="form-control mt-3"
+              placeholder="Type Parking Area Price..."
+            />
+            <span className="text text-danger">{errors.price?.message}</span>
             <div className="row">
               <div className="col-md-6 mt-3">
                 <label>Start Time</label>
