@@ -189,13 +189,13 @@ const SlotDetail = () => {
   return (
     <>
       <SideMenu />
-      <div style={{ marginLeft: "20rem" }}>
+      <div id="home_page">
         <div className="container" id="slots_detail">
           <h2 className="my-4">Slots</h2>
           <p>Check Slots Availablity</p>
           <form onSubmit={handleSubmit(checkAvailablity)}>
             <div className="row align-items-start">
-              <div className="col-md-3">
+              <div className="col-lg-3">
                 <label>Start Time</label>
                 <input
                   type="time"
@@ -206,7 +206,7 @@ const SlotDetail = () => {
                   {errors.startTime?.message}
                 </span>
               </div>
-              <div className="col-md-3">
+              <div className="col-lg-3">
                 <label>End Time</label>
                 <input
                   type="time"
@@ -217,7 +217,7 @@ const SlotDetail = () => {
                   {errors.endTime?.message}
                 </span>
               </div>
-              <div className="col-md-3">
+              <div className="col-lg-3">
                 <label>Date</label>
                 <input
                   min={currentDated}
@@ -227,7 +227,7 @@ const SlotDetail = () => {
                 />
                 <span className="text text-danger">{errors.date?.message}</span>
               </div>
-              <div className="col-md-3 mt-4">
+              <div className="col-lg-3 mt-4">
                 <button className="btn btn-primary" type="submit">
                   Check Availablity
                 </button>
@@ -239,7 +239,7 @@ const SlotDetail = () => {
             {slots?.length
               ? slots?.map((data) => {
                   return (
-                    <div className="col-md-2">
+                    <div className="col-xl-2 col-lg-3 col-md-3 col-sm-6">
                       <div
                         className="card"
                         onClick={() =>

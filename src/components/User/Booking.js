@@ -33,7 +33,7 @@ const Booking = () => {
     <>
       <SideMenu />
       <div className="container">
-        <div style={{ marginLeft: "15rem" }} id="home_page">
+        <div id="home_page">
           <h1 className="mt-4 text-center">Your Booking</h1>
           <hr />
           <div className="table-responsive">

@@ -65,10 +65,10 @@ const Login = () => {
         className="row align-items-center"
         style={{ padding: "0 !important" }}
       >
-        <div className="col-sm-5">
+        <div className="col-md-5">
           <img src={main} alt="no-image" className="cover" />
         </div>
-        <div className="col-sm-7">
+        <div className="col-md-7">
           <form onSubmit={login}>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <label>Email</label>

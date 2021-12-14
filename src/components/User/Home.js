@@ -22,13 +22,13 @@ const Home = () => {
     <>
       <SideMenu />
       <div className="container">
-        <div style={{ marginLeft: "15rem" }} id="home_page">
+        <div id="home_page">
           <h1 className="text-center">Book Your Slots Now</h1>
           <hr />
           <div className="row" style={{ margin: "4rem 0 2rem" }}>
             {areaData?.map((data, ind) => {
               return (
-                <div className="col-md-3" key={ind}>
+                <div className="col-lg-3 col-sm-4" key={ind}>
                   <div
                     className="card"
                     onClick={() => navigate(`/slots-detail/${data?.id}`)}

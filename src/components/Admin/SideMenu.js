@@ -10,7 +10,7 @@ import {
   MdOutlinePlace,
   MdOutlineCreateNewFolder,
 } from "react-icons/md";
-import { AiOutlineLogout, AiOutlineHome } from "react-icons/ai";
+import { AiOutlineLogout, AiOutlineHome, AiOutlineMenu } from "react-icons/ai";
 import { BiMessageSquareAdd } from "react-icons/bi";
 import { toast } from "react-toastify";
 import { db } from "../../config/firebase";
@@ -21,6 +21,7 @@ import { useSelector } from "react-redux";
 const SideMenu = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownOpen2, setDropdownOpen2] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const data = useSelector((state) => state);
@@ -47,7 +48,22 @@ const SideMenu = () => {
 
   return (
     <>
-      <div className="side_menu">
+      <div className="humberg" onClick={() => setShowMenu(true)}>
+        <AiOutlineMenu size={28} />
+      </div>
+      <div className="side_menu" style={{display: showMenu && 'block'}}>
+        <div className="show_on_mbl">
+          <h3
+            style={{
+              textAlign: "right",
+              marginRight: "1em",
+              cursor: "pointer",
+            }}
+            onClick={() => setShowMenu(false)}
+          >
+            &#10006;
+          </h3>
+        </div>
         <div
           className="d-flex align-items-center justify-content-center"
           style={{ margin: "1rem 0 2rem" }}
@@ -60,7 +76,7 @@ const SideMenu = () => {
           <h3>{data?.userData?.name}</h3>
           <h5>{data?.userData?.email}</h5>
         </div>
-        <h4>{data?.userData?.role === "admin" ? "Dashboard" : "User"}</h4>
+        <h4>{data?.userData?.role === "admin" ? "Dashboard" : ""}</h4>
         {data?.userData?.role === "admin" ? (
           <>
             <li onClick={() => navigate("/dashboard")}>
@@ -156,11 +172,6 @@ const SideMenu = () => {
         ) : (
           <>
             <li onClick={() => navigate("/home")}>
-              {/* <AiOutlineHome
-                color="#fff"
-                size={20}
-                style={{ marginRight: "15px" }}
-              /> */}
               <Link to="/home">Home</Link>
             </li>
             <li onClick={() => navigate("/booking")}>
