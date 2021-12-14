@@ -77,6 +77,9 @@ const SlotDetail = () => {
     let ts = data.startTime.split(":");
     let te = data.endTime.split(":");
     let timeDur = te[0] - ts[0];
+    if(timeDur < 0){
+      timeDur = 24 + timeDur;
+    }
     let finalCost = areaDetail?.price * timeDur;
     setCost(finalCost);
     setUserStartTime(data.startTime);
