@@ -56,12 +56,14 @@ const SlotDetail = () => {
       .get()
       .then((res) => {
         setAreaDetail(res.data());
-      });
+      })
+      .catch(err => console.log(err));
     //booking get
     let temp2 = [];
     db.collection("booking")
       .where("areaId", "==", id)
       .where("bookingDate", ">=", currentDated)
+      .where("isCancel", "==", false)
       .get()
       .then((res) => {
         res.docs.map((i) => {
@@ -71,9 +73,9 @@ const SlotDetail = () => {
       })
       .catch((err) => console.log(err));
   }, [id, currentDated]);
-  // console.log(slots);
+  
   const checkAvailablity = (data, e) => {
-    setShowSlots(true);
+    // setShowSlots(true);
     let ts = data.startTime.split(":");
     let te = data.endTime.split(":");
     let timeDur = te[0] - ts[0];
@@ -86,12 +88,13 @@ const SlotDetail = () => {
     setUserEndTime(data.endTime);
     setUserDate(data.date);
     let getdate = new Date();
+    
     let currentDate = getdate.toISOString().slice(0, 10);
-    // if (data.endTime < data.startTime) {
-    //   toast.error("End time cannot before start time");
-    // } else {
-    //   setShowSlots(true);
-    // }
+    if (data.endTime <= data.startTime) {
+      toast.error("Not Possible...");
+    } else {
+      setShowSlots(true);
+    }
     for (let i = 0; i < bookData?.length; i++) {
       let filteredSlots = slots?.filter((s) => bookData[i].slotId === s.id);
       if (filteredSlots.length) {
@@ -137,7 +140,9 @@ const SlotDetail = () => {
         status: true,
         bookingDate: currentDate,
         parkingDate: userDate,
-        cost: cost
+        cost: cost,
+        isCancel: false,
+        areaName: areaDetail?.area
       };
 
       db.collection("booking")
@@ -177,7 +182,7 @@ const SlotDetail = () => {
     doc.text(
       40,
       40,
-      ` ******Parking Slip****** \n Date of Slip: ${currentDate} \n Booker Name: ${bookerName} \n Parking Area Name: ${areaName} \n  \n Parking Time: From ${startTime} To ${endTime} \n \n Total Cost: ${cost} \n *********************************`
+      `\n *************** Parking Slip ******************** \n \n Date of Slip: ${currentDate} \n Booker Name: ${bookerName} \n Parking Area Name: ${areaName} \n  \n Parking Time: From ${startTime} To ${endTime} \n \n Total Cost: ${cost} \n  \n ***********************************************`
     );
     doc.save("test1.pdf");
   };

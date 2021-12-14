@@ -82,8 +82,8 @@ const AreaList = (props) => {
           <h2 className="mb-4" style={{ fontWeight: "500" }}>
             Area List
           </h2>
-          <div class="table-responsive">
-            <table class="table table-bordered">
+          <div className="table-responsive">
+            <table className="table table-bordered">
               <thead
                 style={{
                   backgroundColor: "#000",
@@ -103,7 +103,7 @@ const AreaList = (props) => {
                 {loader ? (
                   <tr className="text-center">
                     <td colspan="4">
-                      <div class="spinner-border text-primary"></div>
+                      <div className="spinner-border text-primary"></div>
                     </td>
                   </tr>
                 ) : (

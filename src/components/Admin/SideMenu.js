@@ -10,7 +10,7 @@ import {
   MdOutlinePlace,
   MdOutlineCreateNewFolder,
 } from "react-icons/md";
-import { AiOutlineLogout } from "react-icons/ai";
+import { AiOutlineLogout, AiOutlineHome } from "react-icons/ai";
 import { BiMessageSquareAdd } from "react-icons/bi";
 import { toast } from "react-toastify";
 import { db } from "../../config/firebase";
@@ -154,9 +154,19 @@ const SideMenu = () => {
             </li>
           </>
         ) : (
-          <li onClick={() => navigate("/home")}>
-            <Link to="/home">Home</Link>
-          </li>
+          <>
+            <li onClick={() => navigate("/home")}>
+              {/* <AiOutlineHome
+                color="#fff"
+                size={20}
+                style={{ marginRight: "15px" }}
+              /> */}
+              <Link to="/home">Home</Link>
+            </li>
+            <li onClick={() => navigate("/booking")}>
+              <Link to="/booking">Bookings</Link>
+            </li>
+          </>
         )}
 
         <li onClick={logOut}>

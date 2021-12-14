@@ -16,6 +16,7 @@ import NotFound from "./components/NotFound";
 import Signup from "./components/Signup";
 import Home from "./components/User/Home";
 import SlotDetail from "./components/User/SlotDetail";
+import Booking from "./components/User/Booking";
 
 function App() {
   
@@ -44,6 +45,7 @@ function App() {
             <>
               <Route exact path="/home" element={<Home />} />
               <Route exact path="/slots-detail/:id" element={<SlotDetail />} />
+              <Route exact path="/booking" element={<Booking />} />
             </>
           )}
 
